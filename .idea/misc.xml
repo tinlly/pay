@@ -106,6 +106,7 @@
         <option value="$PROJECT_DIR$/jms/pom.xml" />
         <option value="$PROJECT_DIR$/epay/pom.xml" />
         <option value="$PROJECT_DIR$/distillpay/pom.xml" />
+        <option value="$PROJECT_DIR$/gatewaypay/pom.xml" />
       </list>
     </option>
   </component>

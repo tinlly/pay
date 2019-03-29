@@ -9,6 +9,7 @@
         <module name="collpay" />
         <module name="distillpay" />
         <module name="epay" />
+        <module name="gatewaypay" />
         <module name="jms" />
       </profile>
     </annotationProcessing>
@@ -17,6 +18,7 @@
       <module name="distillpay" target="1.8" />
       <module name="epay" target="1.8" />
       <module name="gateway" target="1.8" />
+      <module name="gatewaypay" target="1.8" />
       <module name="jms" target="1.8" />
       <module name="mcht-regedit" target="1.8" />
       <module name="shangfu" target="1.8" />
@@ -28,6 +30,7 @@
       <module name="distillpay" options="-parameters" />
       <module name="epay" options="-parameters" />
       <module name="gateway" options="-parameters" />
+      <module name="gatewaypay" options="-parameters" />
       <module name="jms" options="-parameters" />
     </option>
   </component>

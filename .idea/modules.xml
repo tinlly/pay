@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/collpay/collpay.iml" filepath="$PROJECT_DIR$/collpay/collpay.iml" />
       <module fileurl="file://$PROJECT_DIR$/distillpay/distillpay.iml" filepath="$PROJECT_DIR$/distillpay/distillpay.iml" />
       <module fileurl="file://$PROJECT_DIR$/epay/epay.iml" filepath="$PROJECT_DIR$/epay/epay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gatewaypay/gatewaypay.iml" filepath="$PROJECT_DIR$/gatewaypay/gatewaypay.iml" />
       <module fileurl="file://$PROJECT_DIR$/jms/jms.iml" filepath="$PROJECT_DIR$/jms/jms.iml" />
       <module fileurl="file://$PROJECT_DIR$/shangfu.iml" filepath="$PROJECT_DIR$/shangfu.iml" />
     </modules>
