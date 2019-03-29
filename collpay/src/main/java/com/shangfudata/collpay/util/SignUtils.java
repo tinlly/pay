@@ -22,7 +22,7 @@ public class SignUtils {
 		System.out.println("签名串:" + signStr);
 		String sign = null;
 		try {
-			//sign = DigestUtils.md5Hex(signStr.getBytes("utf-8"));
+			//downDecoding = DigestUtils.md5Hex(signStr.getBytes("utf-8"));
 			sign = new MD5().digestHex(signStr.getBytes("utf-8"));
 			//byteToHex(signStr.getBytes("utf-8"));
 		} catch (UnsupportedEncodingException e) {

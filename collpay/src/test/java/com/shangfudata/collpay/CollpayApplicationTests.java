@@ -62,7 +62,7 @@ public class CollpayApplicationTests {
         reqMap.put("card_valid_date", "0318");
         //reqMap.put("notify_url", "http://192.168.168.168");
         reqMap.put("nonce_str", "123456789");
-        //reqMap.put("sign", SignUtils.sign(reqMap, signKey));
+        //reqMap.put("downDecoding", SignUtils.downDecoding(reqMap, signKey));
 
         reqMap.put("card_name", RSAUtils.publicKeyEncrypt(reqMap.get("card_name"), rsaPublicKey));
         reqMap.put("card_no", RSAUtils.publicKeyEncrypt(reqMap.get("card_no"), rsaPublicKey));
@@ -122,8 +122,6 @@ public class CollpayApplicationTests {
 
         //私钥签名
         collpayInfo.setSign(RSAUtils.sign(s,rsaPrivateKey));
-        /*String sign = collpayInfo.getSign();
-        System.out.println("签名信息"+sign);*/
 
         String collpayInfoToJson = gson.toJson(collpayInfo);
 
