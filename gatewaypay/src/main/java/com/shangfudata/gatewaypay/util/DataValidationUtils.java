@@ -5,7 +5,6 @@ import com.shangfudata.gatewaypay.constant.IDType;
 import com.shangfudata.gatewaypay.constant.SettleAccType;
 import com.shangfudata.gatewaypay.entity.GatewaypayInfo;
 import com.shangfudata.gatewaypay.exception.*;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,7 +36,6 @@ public class DataValidationUtils {
         return "";
     }
 
-
     /**
      * 为空判断
      */
@@ -53,7 +51,6 @@ public class DataValidationUtils {
      * 卡类型效验
      */
     public DataValidationUtils cardTypeValid(String cardType) throws CardTypeError, CreditParamIsNullException {
-        //isNullValid(cardType);
         switch (cardType) {
             // 若为贷记卡
             case CardType.CREDIT:
@@ -62,8 +59,8 @@ public class DataValidationUtils {
             case CardType.DEBIT:
                 break;
             default:
-                throw new CardTypeError();
                 // 卡类型错误
+                throw new CardTypeError();
         }
         return this.dataValidationUtils;
     }
@@ -72,7 +69,6 @@ public class DataValidationUtils {
      * 证件类型效验
      */
     public DataValidationUtils cardValid(String idType, String idNo) throws IDTypeLengthException, IDTypeError {
-        //isNullValid(idType);
         // id card 验证
         switch (idType) {
             case IDType.ID_CARD:
@@ -94,14 +90,8 @@ public class DataValidationUtils {
      * 持卡人姓名效验
      */
     public DataValidationUtils cardHolderNameValid(String cardHolderName) throws CardNameException {
-        //isNullValid(cardHolderName);
-        // id card 验证
-        // 判断 持卡人 名称不为空
-        // 判断 持卡人 名称不包含
-        String trim = cardHolderName.trim();
-
         // 持卡人姓名长度小于 2 并且不为中文时抛出异常
-        if (trim.length() < 2 || !RegexUtils.isZh(trim)) {
+        if (cardHolderName.length() < 2 || !RegexUtils.isZh(cardHolderName)) {
             // 持卡人姓名错误
             throw new CardNameException();
         }
@@ -117,15 +107,6 @@ public class DataValidationUtils {
         if (!(RegexUtils.isBankCardNo(cardNo))) {
             throw new BankCardIDException();
         }
-        //isNullValid(cardNo);
-        //String cardId = cardNo;
-        //char bit = getBankCardCheckCode(cardId.substring(0, cardId.length() - 1));
-        //if (bit == 'N') {
-        //    throw new BankCardIDException();
-        //}
-        //if (cardId.charAt(cardId.length() - 1) == bit) {
-        //    throw new BankCardIDException();
-        //}
         return this.dataValidationUtils;
     }
 
@@ -136,7 +117,6 @@ public class DataValidationUtils {
      * @throws NullPointerException
      */
     public DataValidationUtils mobileNumberValid(String bankMobile) throws NotMobileNumberError {
-        //isNullValid(bankMobile);
         if (!(RegexUtils.isMobileExact(bankMobile))) {
             throw new NotMobileNumberError();
         }
@@ -150,7 +130,6 @@ public class DataValidationUtils {
      * @throws NullPointerException
      */
     public DataValidationUtils nonceStrValid(String nonceStr) throws NonceStrLengthException {
-        //isNullValid(nonceStr);
         if (!(nonceStr.length() == 32)) {
             throw new NonceStrLengthException();
         }
@@ -210,8 +189,6 @@ public class DataValidationUtils {
      * CollPay 下游请求参数异常处理方法
      */
     public void processDistillPayException(GatewaypayInfo gatewaypayInfo, Map responseMap) {
-        // 数据效验
-        // 异常处理
         try {
             dataValidationUtils.builder().totalFee(gatewaypayInfo.getTotal_fee())
                     .urlConnection(gatewaypayInfo.getNotify_url())

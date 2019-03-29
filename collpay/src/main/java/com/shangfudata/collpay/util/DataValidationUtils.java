@@ -49,7 +49,6 @@ public class DataValidationUtils {
      * 卡类型效验
      */
     public DataValidationUtils cardTypeValid(String cardType, String cvv2, String cardValidData) throws CardTypeError, CreditParamIsNullException {
-        //isNullValid(cardType);
         switch (cardType) {
             case CardType.CREDIT:
                 // 若为贷记卡
@@ -74,7 +73,6 @@ public class DataValidationUtils {
      * 证件类型效验
      */
     public DataValidationUtils cardValid(String idType, String idNo) throws IDTypeLengthException, IDTypeError {
-        //isNullValid(idType);
         // id card 验证
         switch (idType) {
             case IDType.ID_CARD:
@@ -96,14 +94,8 @@ public class DataValidationUtils {
      * 持卡人姓名效验
      */
     public DataValidationUtils cardHolderNameValid(String cardHolderName) throws CardNameException {
-        //isNullValid(cardHolderName);
-        // id card 验证
-        // 判断 持卡人 名称不为空
-        // 判断 持卡人 名称不包含
-        String trim = cardHolderName.trim();
-
         // 持卡人姓名长度小于 2 并且不为中文时抛出异常
-        if (trim.length() < 2 || !RegexUtils.isZh(trim)) {
+        if (cardHolderName.length() < 2 || !RegexUtils.isZh(cardHolderName)) {
             // 持卡人姓名错误
             throw new CardNameException();
         }
@@ -119,42 +111,8 @@ public class DataValidationUtils {
         if (!(RegexUtils.isBankCardNo(cardNo))) {
             throw new BankCardIDException();
         }
-        //isNullValid(cardNo);
-        //String cardId = cardNo;
-        //char bit = getBankCardCheckCode(cardId.substring(0, cardId.length() - 1));
-        //if (bit == 'N') {
-        //    throw new BankCardIDException();
-        //}
-        //if (cardId.charAt(cardId.length() - 1) == bit) {
-        //    throw new BankCardIDException();
-        //}
         return this.dataValidationUtils;
     }
-
-    /**
-     * 从不含校验位的银行卡卡号采用 Luhm 校验算法获得校验位
-     *
-     * @param nonCheckCodeCardId
-     * @return
-     */
-    //private static char getBankCardCheckCode(String nonCheckCodeCardId) {
-    //    //    if (nonCheckCodeCardId == null || nonCheckCodeCardId.trim().length() == 0
-    //    //            || !nonCheckCodeCardId.matches("\\d+")) {
-    //    //        //如果传的不是数据返回N
-    //    //        return 'N';
-    //    //    }
-    //    //    char[] chs = nonCheckCodeCardId.trim().toCharArray();
-    //    //    int luhmSum = 0;
-    //    //    for (int i = chs.length - 1, j = 0; i >= 0; i--, j++) {
-    //    //        int k = chs[i] - '0';
-    //    //        if (j % 2 == 0) {
-    //    //            k *= 2;
-    //    //            k = k / 10 + k % 10;
-    //    //        }
-    //    //        luhmSum += k;
-    //    //    }
-    //    //    return (luhmSum % 10 == 0) ? '0' : (char) ((10 - luhmSum % 10) + '0');
-    //    //}
 
     /**
      * 手机号效验
@@ -163,7 +121,6 @@ public class DataValidationUtils {
      * @throws NullPointerException
      */
     public DataValidationUtils mobileNumberValid(String bankMobile) throws NotMobileNumberError {
-        //isNullValid(bankMobile);
         if (!(RegexUtils.isMobileExact(bankMobile))) {
             throw new NotMobileNumberError();
         }
@@ -177,7 +134,6 @@ public class DataValidationUtils {
      * @throws NullPointerException
      */
     public DataValidationUtils nonceStrValid(String nonceStr) throws NonceStrLengthException {
-        //isNullValid(nonceStr);
         if (!(nonceStr.length() == 32)) {
             throw new NonceStrLengthException();
         }
@@ -199,31 +155,24 @@ public class DataValidationUtils {
         } catch (NonceStrLengthException e) {
             responseMap.put("status", "FAIL");
             responseMap.put("message", "随机字符串长度错误");
-            //return gson.toJson(responseMap);
         } catch (NotMobileNumberError notMobileNumberError) {
             responseMap.put("status", "FAIL");
             responseMap.put("message", "手机号码验证错误");
-            //return gson.toJson(responseMap);
         } catch (CreditParamIsNullException e) {
             responseMap.put("status", "FAIL");
             responseMap.put("message", "贷记卡参数为空");
-            //return gson.toJson(responseMap);
         } catch (CardTypeError cardTypeError) {
             responseMap.put("status", "FAIL");
             responseMap.put("message", "银行卡类型错误");
-            //return gson.toJson(responseMap);
         } catch (IDTypeLengthException e) {
             responseMap.put("status", "FAIL");
             responseMap.put("message", "证件号码错误");
-            //return gson.toJson(responseMap);
         } catch (IDTypeError idTypeError) {
             responseMap.put("status", "FAIL");
             responseMap.put("message", "证件类型错误");
-            //return gson.toJson(responseMap);
         } catch (BankCardIDException e) {
             responseMap.put("status", "FAIL");
             responseMap.put("message", "银行卡号错误");
-            //return gson.toJson(responseMap);
         }
     }
 }
