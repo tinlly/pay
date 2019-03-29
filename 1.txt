@@ -1,2 +1,1 @@
 test
-Push future to origin/future was rejected by remote
