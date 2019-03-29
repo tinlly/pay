@@ -75,7 +75,6 @@ public class CollpayApplicationTests {
         String s = gson.toJson(reqMap);
 
         reqMap.put("sign",RSAUtils.sign(s,rsaPrivateKey));
-
     }
 
     @Test
@@ -128,7 +127,6 @@ public class CollpayApplicationTests {
         String collpay = collpayController.Collpay(collpayInfoToJson);
         System.out.println(collpay);
     }
-
 
     //@Test
     public void testQuery(){
