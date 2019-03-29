@@ -9,6 +9,7 @@ import com.shangfudata.distillpay.entity.DownSpInfo;
 import com.shangfudata.distillpay.jms.DistillpaySenderService;
 import com.shangfudata.distillpay.service.DistillpayService;
 import com.shangfudata.distillpay.util.AesUtils;
+import com.shangfudata.distillpay.util.DataValidationUtils;
 import com.shangfudata.distillpay.util.RSAUtils;
 import com.shangfudata.distillpay.util.SignUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,30 +29,35 @@ public class DistillpayServiceImpl implements DistillpayService {
     String signKey = "36D2F03FA9C94DCD9ADE335AC173CCC3";
     String aesKey = "45FBC053B1913EE83BE7C2801B263F3F";
 
-
     @Autowired
     DownSpInfoRespository downSpInfoRespository;
-
     @Autowired
     DistillpayInfoRespository distillpayInfoRespository;
-
     @Autowired
     DistillpaySenderService distillpaySenderService;
 
-
     public String downDistillpay(String distillpayInfoToJson) throws Exception{
-
+        Map<String,String> responseMap = new HashMap();
         Gson gson = new Gson();
 
         Map map = gson.fromJson(distillpayInfoToJson, Map.class);
+
+        DataValidationUtils builder = DataValidationUtils.builder();
+
+        String nullValid = builder.isNullValid(map);
+        if(!("".equals(nullValid))){
+            responseMap.put("status","FAIL");
+            responseMap.put("message",nullValid);
+            return gson.toJson(responseMap);
+        }
+
+
         String sign = (String)map.remove("sign");
-        //System.out.println("签名sign:"+sign);
         String s = gson.toJson(map);
 
         //下游传递上来的机构id，签名信息
         DistillpayInfo distillpayInfo = gson.fromJson(distillpayInfoToJson, DistillpayInfo.class);
         String down_sp_id = distillpayInfo.getDown_sp_id();
-        //String sign = distillpayInfo.getSign();
 
         Optional<DownSpInfo> downSpInfo = downSpInfoRespository.findById(down_sp_id);
         //拿到我自己（平台）的密钥(私钥)
@@ -61,23 +68,34 @@ public class DistillpayServiceImpl implements DistillpayService {
         RSAPublicKey rsaPublicKey = RSAUtils.loadPublicKey(down_pub_key);
 
         //公钥验签
-        boolean b = RSAUtils.doCheck(s, sign, rsaPublicKey);
-        if (true == b){
+        if (RSAUtils.doCheck(s, sign, rsaPublicKey)){
             //私钥解密字段
             distillpayInfo.setCard_name(RSAUtils.privateKeyDecrypt(distillpayInfo.getCard_name(), rsaPrivateKey));
             distillpayInfo.setCard_no(RSAUtils.privateKeyDecrypt(distillpayInfo.getCard_no(), rsaPrivateKey));
             distillpayInfo.setId_no(RSAUtils.privateKeyDecrypt(distillpayInfo.getId_no(), rsaPrivateKey));
+
+            // 效验数据
+            builder.processDistillPayException(distillpayInfo , map);
+            // 效验失败返回响应数据
+            if(!(map.get("status").equals(""))){
+                return gson.toJson(map);
+            }
 
             distillpayInfoRespository.save(distillpayInfo);
 
             String dispayInfoToJson = gson.toJson(distillpayInfo);
             distillpaySenderService.sendMessage("distillpayinfo.test",dispayInfoToJson);
 
-            return "正在处理中/。。。";
+            // 响应数据
+            responseMap.put("sp_id",distillpayInfo.getDown_sp_id());
+            responseMap.put("mch_id",distillpayInfo.getDown_mch_id());
+            responseMap.put("status", "SUCCESS");
+            responseMap.put("trade_state", "正在处理中");
+            return gson.toJson(responseMap);
         }
-
-        return "信息错误，交易失败";
-
+        responseMap.put("status", "FAIL");
+        responseMap.put("trade_state", "签名错误");
+        return gson.toJson(responseMap);
     }
 
     /**
@@ -92,7 +110,6 @@ public class DistillpayServiceImpl implements DistillpayService {
      */
     @JmsListener(destination = "distillpayinfo.test")
     public void distillpayToUp(String distillpayInfoToJson){
-        //System.out.println("队列中拿到的-----"+collpayInfoToJson);
         Gson gson = new Gson();
 
         Map distillpayInfoToMap = gson.fromJson(distillpayInfoToJson, Map.class);
@@ -118,7 +135,6 @@ public class DistillpayServiceImpl implements DistillpayService {
 
         //发送请求
         String responseInfo = HttpUtil.post(methodUrl, distillpayInfoToMap, 12000);
-        //System.out.println("通道响应信息"+responseInfo);
         //获取响应信息，并用一个新CollpayInfo对象装下这些响应信息
         DistillpayInfo response = gson.fromJson(responseInfo, DistillpayInfo.class);
 
@@ -135,10 +151,9 @@ public class DistillpayServiceImpl implements DistillpayService {
         if("SUCCESS".equals(response.getStatus())){
             //将订单信息表存储数据库
             distillpayInfoRespository.save(distillpayInfo);
-        }else{
-
         }
 
+        // 向下通知上游订单处理结果
     }
 
 

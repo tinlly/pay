@@ -123,9 +123,10 @@ public class CollpayApplicationTests {
         collpayInfo.setSign(RSAUtils.sign(s,rsaPrivateKey));
 
         String collpayInfoToJson = gson.toJson(collpayInfo);
+        System.out.println(collpayInfoToJson);
 
-        String collpay = collpayController.Collpay(collpayInfoToJson);
-        System.out.println(collpay);
+        //String collpay = collpayController.Collpay(collpayInfoToJson);
+        //System.out.println(collpay);
     }
 
     //@Test

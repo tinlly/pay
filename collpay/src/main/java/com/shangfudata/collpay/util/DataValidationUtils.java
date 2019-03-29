@@ -1,7 +1,9 @@
 package com.shangfudata.collpay.util;
 
+import com.google.gson.Gson;
 import com.shangfudata.collpay.constant.CardType;
 import com.shangfudata.collpay.constant.IDType;
+import com.shangfudata.collpay.entity.CollpayInfo;
 import com.shangfudata.collpay.exception.*;
 import java.util.Map;
 
@@ -13,7 +15,7 @@ public class DataValidationUtils {
 
     static DataValidationUtils dataValidationUtils;
 
-    public static DataValidationUtils init() {
+    public static DataValidationUtils builder() {
         return dataValidationUtils = new DataValidationUtils();
     }
 
@@ -180,4 +182,46 @@ public class DataValidationUtils {
         return this.dataValidationUtils;
     }
 
+
+    /**
+     * CollPay 下游请求参数异常处理方法
+     */
+    public void processCollPayException(CollpayInfo collpayInfo , Map responseMap){
+        // 数据效验
+        // 异常处理
+        try {
+            dataValidationUtils.bankCardValid(collpayInfo.getCard_no()).cardValid(collpayInfo.getId_type(),
+                    collpayInfo.getId_type()).cardTypeValid(collpayInfo.getCard_type(), collpayInfo.getCvv2(),
+                    collpayInfo.getCard_valid_date()).cardHolderNameValid(collpayInfo.getCard_name()).
+                    mobileNumberValid(collpayInfo.getBank_mobile()).nonceStrValid(collpayInfo.getNonce_str());
+        } catch (NonceStrLengthException e) {
+            responseMap.put("status", "FAIL");
+            responseMap.put("message", "随机字符串长度错误");
+            //return gson.toJson(responseMap);
+        } catch (NotMobileNumberError notMobileNumberError) {
+            responseMap.put("status", "FAIL");
+            responseMap.put("message", "手机号码验证错误");
+            //return gson.toJson(responseMap);
+        } catch (CardTypeError cardTypeError) {
+            responseMap.put("status", "FAIL");
+            responseMap.put("message", "银行卡类型错误");
+            //return gson.toJson(responseMap);
+        } catch (CreditParamIsNullException e) {
+            responseMap.put("status", "FAIL");
+            responseMap.put("message", "贷记卡参数为空");
+            //return gson.toJson(responseMap);
+        } catch (IDTypeLengthException e) {
+            responseMap.put("status", "FAIL");
+            responseMap.put("message", "证件号长度错误");
+            //return gson.toJson(responseMap);
+        } catch (IDTypeError idTypeError) {
+            responseMap.put("status", "FAIL");
+            responseMap.put("message", "证件类型错误");
+            //return gson.toJson(responseMap);
+        } catch (BankCardIDException e) {
+            responseMap.put("status", "FAIL");
+            responseMap.put("message", "银行卡号错误");
+            //return gson.toJson(responseMap);
+        }
+    }
 }

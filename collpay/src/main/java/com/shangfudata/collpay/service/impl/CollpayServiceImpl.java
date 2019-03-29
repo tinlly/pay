@@ -51,7 +51,7 @@ public class CollpayServiceImpl implements CollpayService {
      */
     public String downCollpay(String CollpayInfoToJson) throws Exception {
         responseMap = new HashMap();
-        DataValidationUtils dataValidationUtils = DataValidationUtils.init();
+        DataValidationUtils dataValidationUtils = DataValidationUtils.builder();
 
         Gson gson = new Gson();
 
@@ -93,51 +93,21 @@ public class CollpayServiceImpl implements CollpayService {
             // 将信息发送到队列中
             collpaySenderService.sendMessage("collpayinfo.test", collpayInfoToJson);
 
-            // 数据效验
             // 异常处理
-            try {
-                dataValidationUtils.bankCardValid(collpayInfo.getCard_no()).cardValid(collpayInfo.getId_type(),
-                collpayInfo.getId_type()).cardTypeValid(collpayInfo.getCard_type(), collpayInfo.getCvv2(),
-                collpayInfo.getCard_valid_date()).cardHolderNameValid(collpayInfo.getCard_name()).
-                mobileNumberValid(collpayInfo.getBank_mobile()).nonceStrValid(collpayInfo.getNonce_str());
-            } catch (NonceStrLengthException e) {
-                responseMap.put("status", "FAIL");
-                responseMap.put("message", "随机字符串长度错误");
-                return gson.toJson(responseMap);
-            } catch (NotMobileNumberError notMobileNumberError) {
-                responseMap.put("status", "FAIL");
-                responseMap.put("message", "手机号码验证错误");
-                return gson.toJson(responseMap);
-            } catch (CardTypeError cardTypeError) {
-                responseMap.put("status", "FAIL");
-                responseMap.put("message", "银行卡类型错误");
-                return gson.toJson(responseMap);
-            } catch (CreditParamIsNullException e) {
-                responseMap.put("status", "FAIL");
-                responseMap.put("message", "贷记卡参数为空");
-                return gson.toJson(responseMap);
-            } catch (IDTypeLengthException e) {
-                responseMap.put("status", "FAIL");
-                responseMap.put("message", "证件号长度错误");
-                return gson.toJson(responseMap);
-            } catch (IDTypeError idTypeError) {
-                responseMap.put("status", "FAIL");
-                responseMap.put("message", "证件类型错误");
-                return gson.toJson(responseMap);
-            } catch (BankCardIDException e) {
-                responseMap.put("status", "FAIL");
-                responseMap.put("message", "银行卡号错误");
+            dataValidationUtils.processCollPayException(collpayInfo , responseMap);
+
+            // 异常处理后判断是否需要返回
+            if("FAIL".equals(responseMap.get("status"))){
                 return gson.toJson(responseMap);
             }
 
             // 响应数据
-            responseMap.put("sp_id",collpayInfo.getSp_id());
-            responseMap.put("mch_id",collpayInfo.getMch_id());
+            responseMap.put("sp_id",collpayInfo.getDown_sp_id());
+            responseMap.put("mch_id",collpayInfo.getDown_mch_id());
             responseMap.put("status", "SUCCESS");
             responseMap.put("trade_state", "正在处理中");
             return gson.toJson(responseMap);
         }
-
         responseMap.put("status", "FAIL");
         responseMap.put("message", "签名错误");
         return gson.toJson(responseMap);
@@ -155,7 +125,7 @@ public class CollpayServiceImpl implements CollpayService {
      */
     @JmsListener(destination = "collpayinfo.test")
     public void collpayToUp(String collpayInfoToJson) {
-        responseMap = new HashMap();
+        //responseMap = new HashMap();
         Gson gson = new Gson();
 
         Map collpayInfoToMap = gson.fromJson(collpayInfoToJson, Map.class);
@@ -191,15 +161,12 @@ public class CollpayServiceImpl implements CollpayService {
         collpayInfo.setErr_code(response.getErr_code());
         collpayInfo.setErr_msg(response.getErr_msg());
 
-        // 响应数据
-
-
         if ("SUCCESS".equals(response.getStatus())) {
             //将订单信息表存储数据库
             collpayInfoRespository.save(collpayInfo);
-        } else {
-
         }
+
+        // 向下通知上游处理订单情况
     }
 
     /**
