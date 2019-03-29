@@ -19,10 +19,8 @@ public class SubmitController {
      */
     @PostMapping(value = "/submit", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String Submit(@RequestBody String EasypayInfoToJson) throws Exception{
-
+    public String Submit(@RequestBody String EasypayInfoToJson) {
         return submitService.submit(EasypayInfoToJson);
-
     }
 
 }

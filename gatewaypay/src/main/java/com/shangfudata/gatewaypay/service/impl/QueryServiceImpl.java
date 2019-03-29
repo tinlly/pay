@@ -7,11 +7,13 @@ import com.shangfudata.gatewaypay.dao.GatewaypayInfoRespository;
 import com.shangfudata.gatewaypay.entity.GatewaypayInfo;
 import com.shangfudata.gatewaypay.entity.QueryInfo;
 import com.shangfudata.gatewaypay.service.QueryService;
+import com.shangfudata.gatewaypay.util.DataValidationUtils;
 import com.shangfudata.gatewaypay.util.SignUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +31,7 @@ public class QueryServiceImpl implements QueryService {
      * 向上查询（轮询方法）
      */
     @Scheduled(cron = "*/60 * * * * ?")
-    public void queryToUp() throws Exception {
-
+    public void queryToUp() {
         Gson gson = new Gson();
 
         //查询所有交易状态为PROCESSING的订单信息
@@ -38,10 +39,8 @@ public class QueryServiceImpl implements QueryService {
 
         //遍历
         for (GatewaypayInfo gatewaypayInfo : distillpayInfoList) {
-            //System.out.println(distillpayInfo);
             //判断处理状态为SUCCESS的才进行下一步操作
             if ("SUCCESS".equals(gatewaypayInfo.getStatus())) {
-                //if ("PROCESSING".equals(updistillpayInfo.getTrade_state())) {
                 //查询参数对象
                 QueryInfo queryInfo = new QueryInfo();
                 queryInfo.setMch_id(gatewaypayInfo.getMch_id());
@@ -52,18 +51,15 @@ public class QueryServiceImpl implements QueryService {
                 String query = gson.toJson(queryInfo);
                 Map queryMap = gson.fromJson(query, Map.class);
                 //签名
-                queryMap.put("sign",SignUtils.sign(queryMap, signKey));
+                queryMap.put("sign", SignUtils.sign(queryMap, signKey));
 
                 //发送查询请求，得到响应信息
                 String queryResponse = HttpUtil.post(queryUrl, queryMap, 6000);
-                System.out.println("查询响应信息：："+queryResponse);
+                System.out.println("查询响应信息：：" + queryResponse);
                 //使用一个新的UpdistillpayInfo对象，接收响应参数
                 GatewaypayInfo responseInfo = gson.fromJson(queryResponse, GatewaypayInfo.class);
-                // System.out.println(responseInfo);
                 //如果交易状态发生改变，那就更新。
                 if (!(responseInfo.getTrade_state().equals(gatewaypayInfo.getTrade_state()))) {
-
-
                     //得到交易状态信息
                     String trade_state = responseInfo.getTrade_state();
                     String err_code = responseInfo.getErr_code();
@@ -75,27 +71,33 @@ public class QueryServiceImpl implements QueryService {
                     String ch_trade_no = responseInfo.getCh_trade_no();
 
                     String out_trade_no = gatewaypayInfo.getOut_trade_no();
-                    //System.out.println("订单号"+out_trade_no);
 
-
-                    //String notice_status = "true";
                     //根据订单号，更新数据库交易信息表
                     gatewaypayInfoRespository.updateTradeState(trade_state, err_code, err_msg, settle_state, settle_state_desc, ch_trade_no, out_trade_no);
-
                 }
-                //}
             }
         }
     }
 
-
     /**
      * 下游查询方法
+     *
      * @param gatewaypayInfoToJson
      */
     //@Cacheable(value = "collpay", key = "#order.outTradeNo", unless = "#result.tradeState eq 'PROCESSING'")
-    public String downQuery(String gatewaypayInfoToJson){
+    public String downQuery(String gatewaypayInfoToJson) {
+        Map responseMap = new HashMap();
         Gson gson = new Gson();
+
+        DataValidationUtils builder = DataValidationUtils.builder();
+        String nullValid = builder.isNullValid(gson.fromJson(gatewaypayInfoToJson, Map.class));
+
+        if (!("".equals(nullValid))) {
+            responseMap.put("status", "FAIL");
+            responseMap.put("message", nullValid);
+            return gson.toJson(responseMap);
+        }
+
         GatewaypayInfo gatewaypayInfo = gson.fromJson(gatewaypayInfoToJson, GatewaypayInfo.class);
         String out_trade_no = gatewaypayInfo.getOut_trade_no();
 
@@ -103,6 +105,5 @@ public class QueryServiceImpl implements QueryService {
 
         return gson.toJson(finalGatewaypayInfo);
     }
-
 
 }

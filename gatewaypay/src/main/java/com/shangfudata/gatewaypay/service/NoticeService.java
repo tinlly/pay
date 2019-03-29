@@ -1,8 +1,13 @@
 package com.shangfudata.gatewaypay.service;
 
+import java.util.Map;
+
 public interface NoticeService {
 
-    String Upnotice(String outTradeNo, String tradeState);
+    //String Upnotice(String outTradeNo, String tradeState);
 
-    void ToDown(String destinationName, String NoticeInfoToJson);
+    String Upnotice(Map map);
+
+    void noticeDown(String message) throws Exception;
+
 }

@@ -52,7 +52,6 @@ public class NoticeServiceImpl implements NoticeService {
         collpayInfo.setCard_valid_date(RSAUtils.publicKeyEncrypt(collpayInfo.getCard_valid_date(), rsaPublicKey));
 
         String collpayInfotoJson = gson.toJson(collpayInfo);
-        System.out.println("******通知信息******："+collpayInfotoJson);
 
         return collpayInfotoJson;
     }
