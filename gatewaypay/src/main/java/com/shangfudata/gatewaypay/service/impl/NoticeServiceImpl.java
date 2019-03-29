@@ -1,9 +1,7 @@
 package com.shangfudata.gatewaypay.service.impl;
 
 import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpUtil;
 import com.google.gson.Gson;
-
 import com.shangfudata.gatewaypay.dao.BankSpInfoRespository;
 import com.shangfudata.gatewaypay.dao.GatewaypayInfoRespository;
 import com.shangfudata.gatewaypay.entity.BankSpInfo;
@@ -11,12 +9,9 @@ import com.shangfudata.gatewaypay.entity.GatewaypayInfo;
 import com.shangfudata.gatewaypay.mq.NoticeProducer;
 import com.shangfudata.gatewaypay.service.NoticeService;
 import com.shangfudata.gatewaypay.util.RSAUtils;
-import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Service;
-
 import java.security.interfaces.RSAPrivateKey;
 import java.util.Map;
 import java.util.Optional;
@@ -83,17 +78,12 @@ public class NoticeServiceImpl implements NoticeService {
         Gson gson = new Gson();
 
         Optional<BankSpInfo> downSpInfo = bankSpInfoRespository.findById((String) map.get("bank_code"));
-        //拿到密钥(公钥)
+        //拿到密钥(私钥)
         String pri_key = downSpInfo.get().getSelf_pri_key();
         RSAPrivateKey rsaPrivateKey = RSAUtils.loadPrivateKey(pri_key);
 
         Optional<GatewaypayInfo> outTradeNo = gatewaypayInfoRespository.findById((String) map.get("out_trade_no"));
         GatewaypayInfo gatewayInfo = outTradeNo.get();
-        gatewayInfo.getDown_sp_id();
-        gatewayInfo.getMch_id();
-        gatewayInfo.getTrade_state();
-        gatewayInfo.getTotal_fee();
-        gatewayInfo.getTrade_state();
 
         GatewaypayInfo gatewayInfo1 = new GatewaypayInfo();
         gatewayInfo1.setDown_mch_id(gatewayInfo.getDown_sp_id());

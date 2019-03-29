@@ -78,17 +78,12 @@ public class NoticeServiceImpl implements NoticeService {
         Gson gson = new Gson();
 
         Optional<BankSpInfo> downSpInfo = bankSpInfoRespository.findById((String) map.get("bank_code"));
-        //拿到密钥(公钥)
+        //拿到密钥(私钥)
         String pri_key = downSpInfo.get().getSelf_pri_key();
         RSAPrivateKey rsaPrivateKey = RSAUtils.loadPrivateKey(pri_key);
 
         Optional<EasypayInfo> outTradeNo = easypayInfoRespository.findById((String) map.get("out_trade_no"));
         EasypayInfo gatewayInfo = outTradeNo.get();
-        gatewayInfo.getDown_sp_id();
-        gatewayInfo.getMch_id();
-        gatewayInfo.getTrade_state();
-        gatewayInfo.getTotal_fee();
-        gatewayInfo.getTrade_state();
 
         EasypayInfo gatewayInfo1 = new EasypayInfo();
         gatewayInfo1.setDown_mch_id(gatewayInfo.getDown_sp_id());

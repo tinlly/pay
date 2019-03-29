@@ -31,10 +31,6 @@ public class NoticeServiceImpl implements NoticeService {
         String down_sp_id = distillpayInfo.getDown_sp_id();
         Optional<DownSpInfo> downSpInfo = downSpInfoRespository.findById(down_sp_id);
 
-        //获取公钥
-        String down_pub_key = downSpInfo.get().getDown_pub_key();
-        RSAPublicKey rsaPublicKey = RSAUtils.loadPublicKey(down_pub_key);
-
         //获取私钥
         String down_pri_key = downSpInfo.get().getDown_pri_key();
         RSAPrivateKey rsaPrivateKey = RSAUtils.loadPrivateKey(down_pri_key);
@@ -44,9 +40,9 @@ public class NoticeServiceImpl implements NoticeService {
         distillpayInfo.setSign(RSAUtils.sign(s,rsaPrivateKey));
 
         //公钥加密
-        distillpayInfo.setCard_name(RSAUtils.publicKeyEncrypt(distillpayInfo.getCard_name(), rsaPublicKey));
-        distillpayInfo.setCard_no(RSAUtils.publicKeyEncrypt(distillpayInfo.getCard_no(), rsaPublicKey));
-        distillpayInfo.setId_no(RSAUtils.publicKeyEncrypt(distillpayInfo.getId_no(), rsaPublicKey));
+        distillpayInfo.setCard_name(distillpayInfo.getCard_name());
+        distillpayInfo.setCard_no(distillpayInfo.getCard_no());
+        distillpayInfo.setId_no(distillpayInfo.getId_no());
 
         String collpayInfotoJson = gson.toJson(distillpayInfo);
 

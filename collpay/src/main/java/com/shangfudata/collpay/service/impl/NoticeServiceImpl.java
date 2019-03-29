@@ -31,25 +31,21 @@ public class NoticeServiceImpl implements NoticeService {
         String down_sp_id = collpayInfo.getDown_sp_id();
         Optional<DownSpInfo> downSpInfo = downSpInfoRespository.findById(down_sp_id);
 
-        //获取公钥
-        String down_pub_key = downSpInfo.get().getDown_pub_key();
-        RSAPublicKey rsaPublicKey = RSAUtils.loadPublicKey(down_pub_key);
-
         //获取私钥
         String down_pri_key = downSpInfo.get().getDown_pri_key();
         RSAPrivateKey rsaPrivateKey = RSAUtils.loadPrivateKey(down_pri_key);
 
+        //公钥加密
+        collpayInfo.setCard_name(collpayInfo.getCard_name());
+        collpayInfo.setCard_no(collpayInfo.getCard_no());
+        collpayInfo.setId_no(collpayInfo.getId_no());
+        collpayInfo.setBank_mobile(collpayInfo.getBank_mobile());
+        collpayInfo.setCvv2(collpayInfo.getCvv2());
+        collpayInfo.setCard_valid_date(collpayInfo.getCard_valid_date());
+
         //私钥签名
         String s = gson.toJson(collpayInfo);
         collpayInfo.setSign(RSAUtils.sign(s,rsaPrivateKey));
-
-        //公钥加密
-        collpayInfo.setCard_name(RSAUtils.publicKeyEncrypt(collpayInfo.getCard_name(), rsaPublicKey));
-        collpayInfo.setCard_no(RSAUtils.publicKeyEncrypt(collpayInfo.getCard_no(), rsaPublicKey));
-        collpayInfo.setId_no(RSAUtils.publicKeyEncrypt(collpayInfo.getId_no(), rsaPublicKey));
-        collpayInfo.setBank_mobile(RSAUtils.publicKeyEncrypt(collpayInfo.getBank_mobile(), rsaPublicKey));
-        collpayInfo.setCvv2(RSAUtils.publicKeyEncrypt(collpayInfo.getCvv2(), rsaPublicKey));
-        collpayInfo.setCard_valid_date(RSAUtils.publicKeyEncrypt(collpayInfo.getCard_valid_date(), rsaPublicKey));
 
         String collpayInfotoJson = gson.toJson(collpayInfo);
 
