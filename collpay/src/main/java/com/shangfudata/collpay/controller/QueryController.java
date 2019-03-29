@@ -14,10 +14,9 @@ public class QueryController {
 
     @RequestMapping(value = "/query",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String Query(@RequestBody String CollpayInfoToJson){
+    public String Query(@RequestBody String CollpayInfoToJson) throws Exception {
         System.out.println("传进来的查询参数"+CollpayInfoToJson);
         return queryService.downQuery(CollpayInfoToJson);
-
     }
 
 }

@@ -28,18 +28,15 @@ public class DataValidationUtils {
      */
     public String isNullValid(Map<String, String> map) {
         for (Map.Entry<String, String> stringStringEntry : map.entrySet()) {
-            String value = stringStringEntry.getValue();
-            if (value.equals("id_type")) {
-                continue;
-            }
             try {
-                isNullValid(value);
+                isNullValid(stringStringEntry.getValue());
             } catch (NullPointerException e) {
                 return stringStringEntry.getKey() + "不能为空";
             }
         }
         return "";
     }
+
 
     /**
      * 为空判断
@@ -55,7 +52,7 @@ public class DataValidationUtils {
     /**
      * 卡类型效验
      */
-    public DataValidationUtils cardTypeValid(String cardType) throws CardTypeError {
+    public DataValidationUtils cardTypeValid(String cardType) throws CardTypeError, CreditParamIsNullException {
         //isNullValid(cardType);
         switch (cardType) {
             // 若为贷记卡
@@ -63,10 +60,10 @@ public class DataValidationUtils {
                 break;
             // 若为借记卡
             case CardType.DEBIT:
-                // 卡类型错误
                 break;
             default:
                 throw new CardTypeError();
+                // 卡类型错误
         }
         return this.dataValidationUtils;
     }
@@ -80,7 +77,8 @@ public class DataValidationUtils {
         switch (idType) {
             case IDType.ID_CARD:
                 // 证件验证
-                if (!(RegexUtils.isIDCard18(idNo.trim()))) {
+                if (!(RegexUtils.isIDCard18(idNo))) {
+                    System.out.println("身份证验证错误");
                     // 不为银行卡号
                     throw new IDTypeLengthException();
                 }
@@ -110,49 +108,25 @@ public class DataValidationUtils {
         return this.dataValidationUtils;
     }
 
-    // 卡号效验
-
     /**
      * 校验银行卡卡号
      *
      * @return
      */
     public DataValidationUtils bankCardValid(String cardNo) throws BankCardIDException {
+        if (!(RegexUtils.isBankCardNo(cardNo))) {
+            throw new BankCardIDException();
+        }
         //isNullValid(cardNo);
-        String cardId = cardNo;
-        char bit = getBankCardCheckCode(cardId.substring(0, cardId.length() - 1));
-        if (bit == 'N') {
-            throw new BankCardIDException();
-        }
-        if (cardId.charAt(cardId.length() - 1) == bit) {
-            throw new BankCardIDException();
-        }
+        //String cardId = cardNo;
+        //char bit = getBankCardCheckCode(cardId.substring(0, cardId.length() - 1));
+        //if (bit == 'N') {
+        //    throw new BankCardIDException();
+        //}
+        //if (cardId.charAt(cardId.length() - 1) == bit) {
+        //    throw new BankCardIDException();
+        //}
         return this.dataValidationUtils;
-    }
-
-    /**
-     * 从不含校验位的银行卡卡号采用 Luhm 校验算法获得校验位
-     *
-     * @param nonCheckCodeCardId
-     * @return
-     */
-    private static char getBankCardCheckCode(String nonCheckCodeCardId) {
-        if (nonCheckCodeCardId == null || nonCheckCodeCardId.trim().length() == 0
-                || !nonCheckCodeCardId.matches("\\d+")) {
-            //如果传的不是数据返回N
-            return 'N';
-        }
-        char[] chs = nonCheckCodeCardId.trim().toCharArray();
-        int luhmSum = 0;
-        for (int i = chs.length - 1, j = 0; i >= 0; i--, j++) {
-            int k = chs[i] - '0';
-            if (j % 2 == 0) {
-                k *= 2;
-                k = k / 10 + k % 10;
-            }
-            luhmSum += k;
-        }
-        return (luhmSum % 10 == 0) ? '0' : (char) ((10 - luhmSum % 10) + '0');
     }
 
     /**

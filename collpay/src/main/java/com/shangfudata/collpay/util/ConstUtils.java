@@ -41,6 +41,12 @@ public class ConstUtils {
      * 正则：身份证号码18位
      */
     public static final String REGEX_ID_CARD18 = "^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9Xx])$";
+
+    /**
+     * 简单银行卡号验证
+     */
+    public static final String REGEX_BANK_CARD = "^([1-9]{1})(\\d{14}|\\d{18})$";
+
     /**
      * 正则：邮箱
      */

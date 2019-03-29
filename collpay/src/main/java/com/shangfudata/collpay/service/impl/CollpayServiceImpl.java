@@ -66,7 +66,7 @@ public class CollpayServiceImpl implements CollpayService {
             return gson.toJson(responseMap);
         }
 
-        String sign = (String) map.remove("downDecoding");
+        String sign = (String) map.remove("sign");
         String s = gson.toJson(map);
 
         //下游传递上来的机构id，签名信息
@@ -85,6 +85,7 @@ public class CollpayServiceImpl implements CollpayService {
         if (RSAUtils.doCheck(s, sign, rsaPublicKey)) {
             //私钥解密字段
             downDecoding(collpayInfo, rsaPrivateKey);
+            System.out.println(" >>> " + collpayInfo);
 
             String collpayInfoToJson = gson.toJson(collpayInfo);
 

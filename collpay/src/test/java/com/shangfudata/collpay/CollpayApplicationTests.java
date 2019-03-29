@@ -94,18 +94,18 @@ public class CollpayApplicationTests {
         collpayInfo.setDown_mch_id("101");
 
         collpayInfo.setOut_trade_no(System.currentTimeMillis() + "");
-        collpayInfo.setBody("哈哈哈哈22222");
+        collpayInfo.setBody("哈哈哈哈");
         collpayInfo.setTotal_fee("8864");
         collpayInfo.setCard_type("CREDIT");
-        collpayInfo.setCard_name( "fasf");
-        collpayInfo.setCard_no("41844896001134258654");
+        collpayInfo.setCard_name( "哈哈哈哈");
+        collpayInfo.setCard_no("6217992900013005868");
         collpayInfo.setId_type("ID_CARD");
-        collpayInfo.setId_no("410781199004016952");
-        collpayInfo.setBank_mobile( "12345678912");
+        collpayInfo.setId_no("342101196608282018");
+        collpayInfo.setBank_mobile( "15563637881");
         collpayInfo.setCvv2("123");
         collpayInfo.setCard_valid_date("0318");
         //collpayInfo.set("notify_url", "http://192.168.168.168");
-        collpayInfo.setNonce_str("123456789");
+        collpayInfo.setNonce_str("12345678901234567890123456789011");
 
         //公钥加密
         collpayInfo.setCard_name(RSAUtils.publicKeyEncrypt(collpayInfo.getCard_name(), rsaPublicKey));
@@ -130,7 +130,7 @@ public class CollpayApplicationTests {
     }
 
     //@Test
-    public void testQuery(){
+    public void testQuery() throws Exception {
         CollpayInfo collpayInfo = new CollpayInfo();
         collpayInfo.setOut_trade_no("1553148078245");
         Gson gson = new Gson();

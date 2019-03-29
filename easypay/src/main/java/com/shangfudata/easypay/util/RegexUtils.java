@@ -39,6 +39,14 @@ public class RegexUtils {
     }
 
     /**
+     * 验证银行卡号(简单)
+     */
+    public static boolean isBankCardNo(CharSequence input){
+        return isMatch(REGEX_BANK_CARD , input);
+    }
+
+
+    /**
      * 验证正浮点数
      * @param input
      * @return

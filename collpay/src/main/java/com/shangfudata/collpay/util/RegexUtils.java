@@ -27,6 +27,14 @@ public class RegexUtils {
      * If u want more please visit http://toutiao.com/i6231678548520731137/
      */
 
+
+    /**
+     * 验证银行卡号(简单)
+     */
+    public static boolean isBankCardNo(CharSequence input){
+        return isMatch(REGEX_BANK_CARD , input);
+    }
+
     /**
      * 验证手机号（简单）
      *

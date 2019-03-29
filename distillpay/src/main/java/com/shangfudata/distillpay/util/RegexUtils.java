@@ -38,6 +38,14 @@ public class RegexUtils {
         return isMatch(REGEX_MOBILE_SIMPLE, input);
     }
 
+    /**
+     * 验证银行卡号(简单)
+     */
+    public static boolean isBankCardNo(CharSequence input){
+        return isMatch(REGEX_BANK_CARD , input);
+    }
+
+
     public static boolean isMoney(CharSequence input){
         return isMatch(REGEX_POSITIVE_FLOAT , input);
     }

@@ -30,6 +30,10 @@ public class ConstUtils {
      */
     public static final String REGEX_MOBILE_EXACT = "^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|(147))\\d{8}$";
     /**
+     * 简单银行卡号验证
+     */
+    public static final String REGEX_BANK_CARD = "^([1-9]{1})(\\d{14}|\\d{18})$";
+    /**
      * 正则：电话号码
      */
     public static final String REGEX_TEL = "^0\\d{2,3}[- ]?\\d{7,8}";
