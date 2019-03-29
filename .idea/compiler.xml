@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="collpay" />
+        <module name="distillpay" />
+        <module name="epay" />
+        <module name="jms" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="collpay" target="1.8" />
+      <module name="distillpay" target="1.8" />
+      <module name="epay" target="1.8" />
+      <module name="gateway" target="1.8" />
+      <module name="jms" target="1.8" />
+      <module name="mcht-regedit" target="1.8" />
+      <module name="shangfu" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="collpay" options="-parameters" />
+      <module name="distillpay" options="-parameters" />
+      <module name="epay" options="-parameters" />
+      <module name="gateway" options="-parameters" />
+      <module name="jms" options="-parameters" />
+    </option>
+  </component>
+</project>

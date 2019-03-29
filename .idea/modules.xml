@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/collpay/collpay.iml" filepath="$PROJECT_DIR$/collpay/collpay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/distillpay/distillpay.iml" filepath="$PROJECT_DIR$/distillpay/distillpay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/epay/epay.iml" filepath="$PROJECT_DIR$/epay/epay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jms/jms.iml" filepath="$PROJECT_DIR$/jms/jms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shangfu.iml" filepath="$PROJECT_DIR$/shangfu.iml" />
+    </modules>
+  </component>
+</project>
