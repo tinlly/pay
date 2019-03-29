@@ -146,7 +146,6 @@ public class DistillpayServiceImpl implements DistillpayService {
         distillpayInfo.setCh_trade_no(response.getCh_trade_no());
         distillpayInfo.setErr_code(response.getErr_code());
         distillpayInfo.setErr_msg(response.getErr_msg());
-        System.out.println("------"+distillpayInfo);
 
         if("SUCCESS".equals(response.getStatus())){
             //将订单信息表存储数据库

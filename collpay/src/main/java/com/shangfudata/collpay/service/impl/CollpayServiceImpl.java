@@ -165,7 +165,6 @@ public class CollpayServiceImpl implements CollpayService {
             //将订单信息表存储数据库
             collpayInfoRespository.save(collpayInfo);
         }
-
         // 向下通知上游处理订单情况
     }
 
