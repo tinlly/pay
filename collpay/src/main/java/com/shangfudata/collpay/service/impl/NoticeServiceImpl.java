@@ -1,5 +1,6 @@
 package com.shangfudata.collpay.service.impl;
 
+import cn.hutool.http.HttpRequest;
 import com.google.gson.Gson;
 import com.shangfudata.collpay.dao.CollpayInfoRespository;
 import com.shangfudata.collpay.dao.DownSpInfoRespository;
@@ -9,7 +10,6 @@ import com.shangfudata.collpay.service.NoticeService;
 import com.shangfudata.collpay.util.RSAUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Optional;
@@ -23,7 +23,7 @@ public class NoticeServiceImpl implements NoticeService {
     DownSpInfoRespository downSpInfoRespository;
 
     @Override
-    public String notice(String out_trade_no) throws Exception{
+    public void notice(String out_trade_no) throws Exception{
         Gson gson = new Gson();
         //获得当前订单号的订单信息
         CollpayInfo collpayInfo = collpayInfoRespository.findByOutTradeNo(out_trade_no);
@@ -53,6 +53,13 @@ public class NoticeServiceImpl implements NoticeService {
 
         String collpayInfotoJson = gson.toJson(collpayInfo);
 
-        return collpayInfotoJson;
+        // 通知计数
+        int count = 0;
+        // 通知结果
+        String body = HttpRequest.post("").form(collpayInfotoJson).execute().body();
+        while(body.equals("FAIL") && count != 5){
+            body = HttpRequest.post("").form(collpayInfotoJson).execute().body();
+            count++;
+        }
     }
 }

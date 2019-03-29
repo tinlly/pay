@@ -34,6 +34,8 @@ public class DistillpayServiceImpl implements DistillpayService {
     DistillpayInfoRespository distillpayInfoRespository;
     @Autowired
     DistillpaySenderService distillpaySenderService;
+    @Autowired
+
 
     public String downDistillpay(String distillpayInfoToJson) throws Exception{
         Map<String,String> responseMap = new HashMap();
@@ -152,6 +154,7 @@ public class DistillpayServiceImpl implements DistillpayService {
         }
 
         // 向下通知上游订单处理结果
+        // TODO: 2019/3/29
     }
 
 

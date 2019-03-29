@@ -1,17 +1,15 @@
 package com.shangfudata.easypay.controller;
 
-import com.shangfudata.easypay.service.NoticeService;
+import com.shangfudata.easypay.service.NoticeService111;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/easypay")
 public class NoticeController {
 
     @Autowired
-    NoticeService noticeService;
+    NoticeService111 noticeService;
 
 
     @PostMapping("/notice")

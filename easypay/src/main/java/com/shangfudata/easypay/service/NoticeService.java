@@ -4,7 +4,8 @@ import java.util.Map;
 
 public interface NoticeService {
 
-    String Upnotice(String outTradeNo,String tradeState);
+    String Upnotice(Map map);
 
-    void ToDown(String destinationName,String NoticeInfoToJson);
+    void noticeDown(String message) throws Exception;
+
 }

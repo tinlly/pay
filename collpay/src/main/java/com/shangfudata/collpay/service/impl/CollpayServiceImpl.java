@@ -6,9 +6,9 @@ import com.shangfudata.collpay.dao.CollpayInfoRespository;
 import com.shangfudata.collpay.dao.DownSpInfoRespository;
 import com.shangfudata.collpay.entity.CollpayInfo;
 import com.shangfudata.collpay.entity.DownSpInfo;
-import com.shangfudata.collpay.exception.*;
 import com.shangfudata.collpay.jms.CollpaySenderService;
 import com.shangfudata.collpay.service.CollpayService;
+import com.shangfudata.collpay.service.NoticeService;
 import com.shangfudata.collpay.util.AesUtils;
 import com.shangfudata.collpay.util.DataValidationUtils;
 import com.shangfudata.collpay.util.RSAUtils;
@@ -16,7 +16,6 @@ import com.shangfudata.collpay.util.SignUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
-
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.HashMap;
@@ -29,14 +28,14 @@ import java.util.Optional;
 
 @Service
 public class CollpayServiceImpl implements CollpayService {
-    Map responseMap = null;
-
     @Autowired
     CollpayInfoRespository collpayInfoRespository;
     @Autowired
     DownSpInfoRespository downSpInfoRespository;
     @Autowired
     CollpaySenderService collpaySenderService;
+    @Autowired
+    NoticeService noticeService;
 
     String methodUrl = "http://testapi.shangfudata.com/gate/cp/collpay";
     String signKey = "00000000000000000000000000000000";
@@ -50,13 +49,12 @@ public class CollpayServiceImpl implements CollpayService {
      * 4.调用向上交易请求方法，参数为collpay对象
      */
     public String downCollpay(String CollpayInfoToJson) throws Exception {
-        responseMap = new HashMap();
+        Map responseMap = new HashMap();
         DataValidationUtils dataValidationUtils = DataValidationUtils.builder();
 
         Gson gson = new Gson();
 
         Map map = gson.fromJson(CollpayInfoToJson, Map.class);
-
 
         String message = dataValidationUtils.isNullValid(map);
 
@@ -125,7 +123,7 @@ public class CollpayServiceImpl implements CollpayService {
      * 5.判断，保存数据库
      */
     @JmsListener(destination = "collpayinfo.test")
-    public void collpayToUp(String collpayInfoToJson) {
+    public void collpayToUp(String collpayInfoToJson) throws Exception {
         //responseMap = new HashMap();
         Gson gson = new Gson();
 
@@ -167,6 +165,9 @@ public class CollpayServiceImpl implements CollpayService {
             collpayInfoRespository.save(collpayInfo);
         }
         // 向下通知上游处理订单情况
+
+        // TODO: 2019/3/29 通知接口方法
+        noticeService.notice(responseInfo);
     }
 
     /**

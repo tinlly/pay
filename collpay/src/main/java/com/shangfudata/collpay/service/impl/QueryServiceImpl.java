@@ -2,7 +2,6 @@ package com.shangfudata.collpay.service.impl;
 
 import cn.hutool.http.HttpUtil;
 import com.google.gson.Gson;
-import com.shangfudata.collpay.controller.NoticeController;
 import com.shangfudata.collpay.dao.CollpayInfoRespository;
 import com.shangfudata.collpay.dao.DownSpInfoRespository;
 import com.shangfudata.collpay.entity.CollpayInfo;
